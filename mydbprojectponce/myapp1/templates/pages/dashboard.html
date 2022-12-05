@@ -1,0 +1,823 @@
+{% load static %} <!--- Built-in helper in Django to load static; short-hand syntax --->
+
+<!-- Header Start-->
+{% block headerinclude %}
+
+<title>Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" type="text/css" href= "{% static 'css/styles.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}"/>
+<style>
+  body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+  body {font-size:16px;}
+  .w3-half img {margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+  .w3-half img:hover {opacity:1}
+</style>
+
+{% endblock headerinclude %}
+<!-- Header End -->
+
+<!-- Content/Body Start -->
+{% block content %} <!----------------------------------------------------------------->
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+    <img src="{% static 'images/blood-donation.png' %}" style="width:50%; margin-bottom: -65px;" alt="Logo">
+    <h2 class="w3-padding-64"><b>Blood Bank<br style="display: block; content: ''; margin-top: -7px;">System</b></h2>
+  </div>
+<div class="w3-bar-block">
+    <a href="{% url 'myapp1:my_index_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="{% url 'myapp1:features_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Features</a> 
+    <a href="{% url 'myapp1:aboutus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">About Us</a> 
+    <a href="{% url 'myapp1:contactus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact Us</a> 
+    <a href="{% url 'myapp1:signin_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign In</a> 
+    <a href="{% url 'myapp1:signup_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign Up</a>
+    <!-- ADDED CODE -->
+    {% if current_user %}
+        <a href="{% url 'myapp1:logout' %}"onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a>
+        <hr>
+        <h2>Welcome <span style="color: dodgerblue;">{{current_user}}</span>!</h2>
+    {% else %}
+        <a href="{% url 'myapp1:signin_view' %}">Login</a>
+        <span>/</span>
+        <a href="{% url 'myapp1:signup_view' %}">Sign Up</a>
+        <hr>
+        <h2>Login to access this website!</h2>
+    {% endif %}
+    <!-- ADDED CODE -->
+  </div>
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+  <span>Company Name</span>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+
+  <!-- Header -->
+  <div class="w3-container" style="margin-top:80px" id="showcase">
+    <img src="{% static 'images/coffee.png' %}" style="width: 65px; float: left; margin-right: 10px; margin-top: -10px;">
+    <h1 class="w3-xxxlarge w3-text-red" style="font-weight: bold;">Dashboard</h1>
+    <hr style="width:50px;border:5px solid red;" class="w3-round">
+    <br>
+
+    <div style="margin-top: -30px;">
+    <img src="{% static 'images/samplechart.png' %}" alt="samplechart" style="display: block; width: 80%;">
+    </div>
+
+    <!-- Donors Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Donors Table</h2>
+    <a href="{% url 'myapp1:addDonor_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; font-size: 14px; font-weight: bold; width: 20%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add a Donor</a>
+ 
+    <div class="row">
+    <div class="col-xs-12">
+
+    <table id="donors" class="table table-striped table-bordered" style="width:100%; color: #1c1c1c;"">
+    <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;">  
+            <th hidden>Donor ID</th>    
+            <th>Firstname</th>           
+            <th>Lastname</th>                
+            <th>Actions</th>        
+        </tr>
+    </thead>
+    <tbody>
+        {% for donors in donors %}
+        <tr style="font-size: 14px; text-align: center;">
+            <td hidden>{{donors.donor_id}}</td> 
+            <td>{{donors.first_name}}</td>           
+            <td>{{donors.last_name}}</td>                    
+            <td style="width: 100px;">
+              <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal-{{donors.donor_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+              <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal-{{donors.donor_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>
+          </tr>
+          <!-- newModal -->
+          <div class="modal fade" id="newModal-{{donors.donor_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 style="margin-left: 20px;">Edit Record - Donor ID: {{donors.donor_id}}</h3>
+              </div>
+              <form id="updateForm" method="POST">
+              <div class="modal-body">         
+                  {% csrf_token %}
+                  <div class = "row">
+                    <div class = "col-sm-3" hidden>
+                      <input type="text" class="form-control" id="donor_id" name = "donor_id"  value="{{donors.donor_id}}" required>
+                    </div> 
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="first_name" name = "first_name"  value="{{donors.first_name}}" required>
+                    </div>         
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="last_name" name = "last_name" value="{{donors.last_name}}" required>
+                    </div>          
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="contact_number" name = "contact_number" value="{{donors.contact_number}}" required>
+                    </div>          
+                    <div class = "col-sm-3" style="margin-top: 5px;">
+                      <select class="form-control" id = "blood_type" type="text" name ="blood_type" required style="background-color: #f0f0f0; width: 150px; border-radius: 4px; border: none; height: 36px;">
+                        <option value = "{{donors.blood_type}}" selected>{{donors.blood_type}}</option>
+                        <option value = "AB+">AB+</option>
+                        <option value = "AB-">AB-</option>
+                        <option value = "A+">A+</option>
+                        <option value = "A-">A-</option>
+                        <option value = "B+">B+</option>
+                        <option value = "B-">B-</option>
+                        <option value = "O+">O+</option>
+                        <option value = "O-">O-</option>
+                      </select>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" id="btnUpdateDonor" name="btnUpdateDonor" class="button">Update</button>
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+
+          </div>
+          <!-- End of the newModal -->
+
+          <!-- delModal-->
+          <div class="modal fade" id="delModal-{{donors.donor_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Delete Record - Donor ID: {{donors.donor_id}}</h2>
+              </div>
+              <form id="deleteForm" method="POST" >
+                {% csrf_token %}
+              <div class="modal-body">
+                <div class = "col-sm-3" hidden>
+                  <input type="text" class="form-control" id="donor_id" name = "donor_id"  value="{{donors.donor_id}}">
+                </div> 
+                Are you sure you want to delete this donor's record?
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+                <button type="submit" id="btnDeleteDonor" name="btnDeleteDonor" class="button">Yes</button>
+              </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of the delModal -->
+        {% endfor %}
+    </tbody>
+    </table>
+
+    </div>
+    </div>
+
+    <br>
+    <!-- Donation Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Donations Table</h2>
+    <a href="{% url 'myapp1:addDonation_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; font-size: 14px; font-weight: bold; width: 20%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add a Donation</a>
+ 
+
+    <div class="row">
+    <div class="col-xs-12">
+
+    <table id="donations" class="table table-striped table-bordered" style="width: 100%; color: #1c1c1c;"">
+    <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;"> 
+            <th hidden>Donation ID</th>             
+            <th>Date of Donation</th>           
+            <th>Amount</th>      
+            <th>Actions</th>             
+        </tr>
+    </thead>
+    <tbody>
+        {% for donations in donations %}
+        <tr style="font-size: 14px; text-align: center;">   
+            <td hidden>{{donations.donation_id}}</td>            
+            <td>{{donations.date_of_donation}}</td>           
+            <td>{{donations.amount}}</td>
+            <td style="width: 100px;">
+              <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal2-{{donations.donation_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+              <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal2-{{donations.donation_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>          
+        </tr> 
+          <!-- new2Modal -->
+          <div class="modal fade" id="newModal2-{{donations.donation_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Edit Record - Donation ID: {{donations.donation_id}}</h2>
+              </div>
+              <form id="updateForm2" method="POST">
+              <div class="modal-body">         
+                  {% csrf_token %}
+                  <div class = "row">
+                    <p style="margin-left: 16px; font-size: 12px">Original Date: {{donations.date_of_donation}}</p>
+                    <div class = "col-sm-3" hidden>
+                      <input type="text" class="form-control" id="donation_id" name = "donation_id"  value="{{donations.donation_id}}" required>
+                    </div> 
+                    <div class = "col-sm-3">
+                      <input type="date" class="form-control" id="date_of_donation" name = "date_of_donation" value="{{donations.date_of_donation}}" required>
+                    </div>
+                    <div class = "col-sm-3">
+                      <input type="number" class="form-control" id="amount" name = "amount" placeholder="Amount(mL)" value="{{donations.amount}}" required>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" id="btnUpdateDonation" name="btnUpdateDonation" class="button">Update</button>
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+
+          </div>
+          <!-- End of the new2Modal -->
+
+          <!-- delModal-->
+          <div class="modal fade" id="delModal2-{{donations.donation_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Delete Record - Donation ID: {{donations.donation_id}}</h2>
+              </div>
+              <form id="deleteForm2" method="POST" >
+                {% csrf_token %}
+              <div class="modal-body">
+                <div class = "col-sm-3" hidden>
+                  <input type="text" class="form-control" id="donation_id" name = "donation_id"  value="{{donations.donation_id}}">
+                </div> 
+                Are you sure you want to delete this donation record?
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+                <button type="submit" id="btnDeleteDonation" name="btnDeleteDonation" class="button">Yes</button>
+              </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of the del2Modal -->
+        {% endfor %}
+    </tbody>
+    </table>
+
+    </div>
+    </div>
+
+    <br>
+    <!-- Donation_Transaction Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Donation Transactions Table</h2>
+    <a href="{% url 'myapp1:addTransaction_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; font-size: 14px; font-weight: bold; width: 20%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add a Transaction</a>
+ 
+    <div class="row">
+    <div class="col-xs-12">
+
+    <table id="donTransac" class="table table-striped table-bordered" style="width: 100%; color: #1c1c1c;"">
+    <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;">
+            <th hidden>DT ID</th>       
+            <th>Amount</th>
+            <th>Date Donated</th>            
+            <th>Blood Type</th>   
+            <th>Actions</th>
+            <td> <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal-{{d.dt_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+                <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal-{{d.dt_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>                          
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in donTransac %}
+        <tr style="font-size: 14px; text-align: center;">
+            <td hidden>{{d.dt_id}}</td>        
+            <td>{{d.amount}}</td>      
+            <td>{{d.date_donated}}</td> 
+            <td>{{d.blood_type}}</td>
+            <td style="width: 100px;">
+              <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal3-{{d.dt_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+              <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal3-{{d.dt_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>            
+        </tr>
+        <!-- new3Modal -->
+        <div class="modal fade" id="newModal3-{{d.dt_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+          <!-- Modal content -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 style="margin-left: 20px;">Edit Record - DT ID: {{d.dt_id}}</h2>
+            </div>
+            <form id="updateForm3" method="POST">
+            <div class="modal-body">         
+                {% csrf_token %}
+                <div class = "row"><p style="margin-left: 216px; font-size: 12px">Original Date: {{d.date_donated}}</p>
+                  <div class = "col-sm-3" hidden>
+                    <input type="text" class="form-control" id="dt_id" name = "dt_id"  value="{{d.dt_id}}" required>
+                  </div> 
+                  <div class = "col-sm-3">
+                    
+                    <input type="number" class="form-control" id="amount" name = "amount" placeholder="Amount(mL)" value="{{d.amount}}" required>
+                  </div>       
+                  <div class = "col-sm-3">
+                    <input type="date" class="form-control" id="date_donated" name = "date_donated" value="{{d.date_donated}}" required>
+                  </div>
+        
+                  <div class = "col-sm-3" >
+                    <select class="form-control" id = "blood_type" type="text" name ="blood_type" required style="background-color: #f0f0f0; width: 150px; border-radius: 4px; border: none; height: 36px;">
+                      <option value = "{{d.blood_type}}" selected>{{d.blood_type}}</option>
+                      <option value = "AB+">AB+</option>
+                      <option value = "AB-">AB-</option>
+                      <option value = "A+">A+</option>
+                      <option value = "A-">A-</option>
+                      <option value = "B+">B+</option>
+                      <option value = "B-">B-</option>
+                      <option value = "O+">O+</option>
+                      <option value = "O-">O-</option>
+                    </select>
+                  </div>
+                </div>
+            </div>
+            <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+              <button type="submit" id="btnUpdateDT" name="btnUpdateDT" class="button">Update</button>
+              <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            </form>
+          </div>
+
+        </div>
+        <!-- End of the new3Modal -->
+
+        <!-- delModal-->
+        <div class="modal fade" id="delModal3-{{d.dt_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+          <!-- Modal content -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 style="margin-left: 20px;">Delete Record - DT ID: {{d.dt_id}}</h2>
+            </div>
+            <form id="deleteForm3" method="POST" >
+              {% csrf_token %}
+            <div class="modal-body">
+              <div class = "col-sm-3" hidden>
+                <input type="text" class="form-control" id="dt_id" name = "dt_id"  value="{{d.dt_id}}">
+              </div> 
+              Are you sure you want to delete this donation record?
+            </div>
+            <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+              <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+              <button type="submit" id="btnDeleteDT" name="btnDeleteDT" class="button">Yes</button>
+            </div>
+            </form>
+          </div>
+        </div>
+        <!-- End of the delModal -->
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    </div>
+<!-- Patients Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Patients Table</h2>
+    <a href="{% url 'myapp1:createpatient_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; font-size: 14px; font-weight: bold; width: 20%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add a Patient</a>
+
+
+    <div class="row">
+    <div class="col-xs-12">
+
+    <table id="patients" class="table table-striped table-bordered" style="width:100%; color: #1c1c1c;">
+    <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;">
+            <th>Patient ID</th>
+            <!-- ADDED CODE -->
+            <th>Username</th> 
+            <!-- ADDED CODE -->        
+            <th>Firstname</th>           
+            <th>Lastname</th>           
+            <th>Contact Number</th>           
+            <th>Blood Type</th>
+            <th>Actions</th>       
+        </tr>
+    </thead>
+    <tbody>
+    {% for patients in patients %}
+        <tr style="font-size: 14px; text-align: center;">
+            <td>{{patients.patient_id}}</td>
+            <!-- ADDED CODE -->  
+            <td>{{patients.username_id}}</td> 
+            <!-- ADDED CODE -->   
+            <td>{{patients.first_name}}</td>           
+            <td>{{patients.last_name}}</td>           
+            <td>{{patients.contact_number}}</td>           
+            <td>{{patients.blood_type}}</td>
+            <td> <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal-{{patients.patient_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+                <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal-{{patients.patient_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>
+
+        </tr>
+          <!-- newModal -->
+          <div class="modal fade" id="newModal-{{patients.patient_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 style="margin-left: 20px;">Edit Record - Patient ID: {{patients.patient_id}}</h3>
+              </div>
+              <form id="updateForm" method="POST">
+              <div class="modal-body">         
+                  {% csrf_token %}
+                  <div class = "row">
+                    <div class = "col-sm-3" hidden>
+                      <input type="text" class="form-control" id="patient_id" name = "patient_id"  value="{{patients.patient_id}}" required>
+                    </div> 
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="first_name" name = "first_name"  value="{{patients.first_name}}" required>
+                    </div>         
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="last_name" name = "last_name" value="{{patients.last_name}}" required>
+                    </div>          
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="contact_number" name = "contact_number" value="{{patients.contact_number}}" required>
+                    </div>          
+                    <div class = "col-sm-3" style="margin-top: 5px;">
+                      <select class="form-control" id = "blood_type" type="text" name ="blood_type" required style="background-color: #f0f0f0; width: 150px; border-radius: 4px; border: none; height: 36px;">
+                        <option value = "{{patients.blood_type}}" selected>{{patients.blood_type}}</option>
+                        <option value = "AB+">AB+</option>
+                        <option value = "AB-">AB-</option>
+                        <option value = "A+">A+</option>
+                        <option value = "A-">A-</option>
+                        <option value = "B+">B+</option>
+                        <option value = "B-">B-</option>
+                        <option value = "O+">O+</option>
+                        <option value = "O-">O-</option>
+                      </select>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" id="btnUpdatePatient" name="btnUpdatePatient" class="button">Update</button>
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+
+          </div>
+          <!-- End of the newModal -->
+
+          <!-- delModal-->
+          <div class="modal fade" id="delModal-{{patients.patient_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Delete Record - Patient ID: {{patients.patient_id}}</h2>
+              </div>
+              <form id="deleteForm" method="POST" >
+                {% csrf_token %}
+              <div class="modal-body">
+                <div class = "col-sm-3" hidden>
+                  <input type="text" class="form-control" id="patient_id" name = "patient_id"  value="{{patients.patient_id}}">
+                </div> 
+                Are you sure you want to delete this patient's record?
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+                <button type="submit" id="btnDeletePatient" name="btnDeletePatient" class="button">Yes</button>
+              </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of the delModal -->
+            {% endfor %}
+    </tbody>
+    </table>
+
+    </div>
+    </div>
+
+
+    <br>
+    <!-- Phlebotomists Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Phlebotomists Table</h2>
+    <a href="{% url 'myapp1:createphlebotomist_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; margin-left: 10px; font-size: 14px; font-weight: bold; width: 10%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add</a>
+
+    <div class="row">
+    <div class="col-xs-12">
+                
+    <table id="phlebotomists" class="table table-striped table-bordered" style="width:100%; color: #1c1c1c;">
+    <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;">
+            <th>Phlebotomist ID</th>
+            <!-- ADDED CODE --> 
+            <th>Username</th>   
+            <!-- ADDED CODE -->    
+            <th>Firstname</th>           
+            <th>Lastname</th>           
+            <th>Contact Number</th>
+            <th>Actions</th>                     
+        </tr>
+        </thead>
+        <tbody>
+            {% for phlebotomists in phlebotomists %}
+        <tr style="font-size: 14px; text-align: center;">
+            <td>{{phlebotomists.pbt_id}}</td>    
+            <!-- ADDED CODE -->
+            <td>{{phlebotomists.username_id}}</td>   
+            <!-- ADDED CODE -->  
+            <td>{{phlebotomists.first_name}}</td>           
+            <td>{{phlebotomists.last_name}}</td>           
+            <td>{{phlebotomists.contact_number}}</td>
+            <td> <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal2-{{phlebotomists.pbt_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+                <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal2-{{phlebotomists.pbt_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>
+        </tr>
+          <!-- newModal -->
+          <div class="modal fade" id="newModal2-{{phlebotomists.pbt_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 style="margin-left: 20px;">Edit Record - Patient ID: {{patients.patient_id}}</h3>
+              </div>
+              <form id="updateForm2" method="POST">
+              <div class="modal-body">         
+                  {% csrf_token %}
+                  <div class = "row">
+                    <div class = "col-sm-3" hidden>
+                      <input type="text" class="form-control" id="pbt_id" name = "pbt_id"  value="{{phlebotomists.pbt_id}}" required>
+                    </div> 
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="first_name" name = "first_name"  value="{{phlebotomists.first_name}}" required>
+                    </div>         
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="last_name" name = "last_name" value="{{phlebotomists.last_name}}" required>
+                    </div>          
+                    <div class = "col-sm-3">
+                      <input type="text" class="form-control" id="contact_number" name = "contact_number" value="{{phlebotomists.contact_number}}" required>
+                    </div>          
+                  </div>
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" id="btnUpdatePhlebotomist" name="btnUpdatePhlebotomist" class="button">Update</button>
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+
+          </div>
+          <!-- End of the newModal -->
+
+          <!-- delModal-->
+          <div class="modal fade" id="delModal2-{{phlebotomists.pbt_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Delete Record - Phlebotomist ID: {{phlebotomists.pbt_id}}</h2>
+              </div>
+              <form id="deleteForm2" method="POST" >
+                {% csrf_token %}
+              <div class="modal-body">
+                <div class = "col-sm-3" hidden>
+                  <input type="text" class="form-control" id="pbt_id" name = "pbt_id"  value="{{phlebotomists.pbt_id}}">
+                </div> 
+                Are you sure you want to delete this phlebotomist's record?
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+                <button type="submit" id="btnDeletePhlebotomist" name="btnDeletePhlebotomist" class="button">Yes</button>
+              </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of the delModal -->
+            {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+    </div>
+
+    <br>
+    <!-- Locations Table -->
+    <h2 style="color: #2c2c2c; font-weight: bold;">Locations Table</h2>
+      <a href="{% url 'myapp1:createlocation_view' %}" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" style="float: right; margin-top: -50px; margin-left: 10px; font-size: 14px; font-weight: bold; width: 10%; border-radius: 8px; text-decoration: none;" onclick="w3_close()" >Add</a>
+
+    <div class="row">
+    <div class="col-xs-12">
+
+    <table id="locations" class="table table-striped table-bordered" style="width:100%; color: #1c1c1c;">
+        <thead>
+        <tr style="font-size: 17px; background-color: #f44336; color: white; font-weight: 0;">
+            <th>State</th>        
+            <th>City</th>           
+            <th>Zip Code</th>           
+            <th>Date of Transaction</th>
+            <th>dt_id</th>
+            <th>Actions</th>                  
+        </tr>
+        </thead>
+        <tbody>      
+        {% for location in location %}
+        <tr style="font-size: 14px; text-align: center;">
+            <td>{{location.state}}</td>        
+            <td>{{location.city}}</td>           
+            <td>{{location.zip_code}}</td>           
+            <td>{{location.date_of_transaction}}</td>
+            <td>{{location.dt_id_id}}</td>
+            <td> <a type="button" class='btn btn-primary' href="#"
+                 data-toggle="modal" 
+                 data-target="#newModal3-{{location.loc_id}}"><span class='glyphicon glyphicon-eye-open'></a>
+                <button type="button" class='btn btn-primary'
+                 data-toggle="modal" 
+                 data-target="#delModal3-{{location.loc_id}}"><span class='glyphicon glyphicon-remove'></button>
+            </td>
+        </tr>
+          <!-- newModal -->
+          <div class="modal fade" id="newModal3-{{location.loc_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 style="margin-left: 20px;">Edit Record - Location ID: {{location.loc_id}}</h3>
+              </div>
+              <form id="updateForm3" method="POST">
+              <div class="modal-body">         
+                  {% csrf_token %}
+                  <div class = "row">
+                    <div class = "col-sm-2" hidden>
+                      <input type="text" class="form-control" id="loc_id" name = "loc_id"  value="{{location.loc_id}}" required>
+                    </div> 
+                    <div class = "col-sm-2">
+                      <input type="text" class="form-control" id="state" name = "state"  value="{{location.state}}" required>
+                    </div>         
+                    <div class = "col-sm-2">
+                      <input type="text" class="form-control" id="city" name = "city" value="{{location.city}}" required>
+                    </div>          
+                    <div class = "col-sm-2">
+                      <input type="text" class="form-control" id="zip_code" name = "zip_code" value="{{location.zip_code}}" required>
+                    </div>
+                    <div class = "col-sm-2">
+                      <input type="date" class="form-control" id="date_of_transaction" name = "date_of_transaction" value="{{location.date_of_transaction}}" required>
+                    </div>
+                    <div class = "col-sm-2">
+                    <select type="number" class="form-control" id="dt_id" name="dt_id" required>
+                    <datalist id="dt_id" required>
+                    <option value = "" selected>dt ID</option>
+                    {% for donation_transaction in donation_transaction %}
+                    <option value ="{{donation_transaction.dt_id}}">{{donation_transaction.dt_id}}</option>
+                    {% endfor %}
+                    </datalist>
+                    </select>
+                    </div>            
+                  </div>
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" id="btnUpdateLocation" name="btnUpdateLocation" class="button">Update</button>
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+              </form>
+            </div>
+
+          </div>
+          <!-- End of the newModal -->
+
+          <!-- delModal-->
+          <div class="modal fade" id="delModal3-{{location.loc_id}}" tabindex="-1" role="dialog" aria-labelledby="newModalLabel" aria-hidden="true" >
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2 style="margin-left: 20px;">Delete Record - Location ID: {{location.loc_id}}</h2>
+              </div>
+              <form id="deleteForm3" method="POST" >
+                {% csrf_token %}
+              <div class="modal-body">
+                <div class = "col-sm-3" hidden>
+                  <input type="text" class="form-control" id="loc_id" name = "loc_id"  value="{{location.loc_id}}">
+                </div> 
+                Are you sure you want to delete this location's record?
+              </div>
+              <div class="modal-footer w3-light-grey w3-container w3-padding-32">
+                <button type="submit" class="button btn-secondary" data-dismiss="modal">No</button>
+                <button type="submit" id="btnDeleteLocation" name="btnDeleteLocation" class="button">Yes</button>
+              </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of the delModal -->
+            {% endfor %}
+        </tbody>
+        </table>
+
+        </div>
+        </div>
+        </div>
+        </div>
+
+
+
+
+
+<!-- End page content -->
+</div>
+
+{% endblock content %} <!------------------------------------------------------------->
+<!-- Content/Body End -->
+
+<!-- Footer Start -->
+{% block footerinclude %} <!---------------------------------------------------------->
+
+<!-- W3.CSS Container -->
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top: 75px; padding-right: 58px; position: relative; right: 0; bottom: 0; width: 100%;"><p class="w3-right"s>Otsuki, McWayne Q. CSIT327 G1-C1 A.Y. 2021-2022</p></div>
+
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#donors').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+$(document).ready(function() {
+    $('#donations').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+$(document).ready(function() {
+    $('#d').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+$(document).ready(function() {
+    $('#patients').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+$(document).ready(function() {
+    $('#phlebotomists').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+$(document).ready(function() {
+    $('#locations').DataTable({
+        "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+    });
+} );
+</script>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+
+</script>
+
+{% endblock footerinclude %} <!-------------------------------------------------------->
+<!-- Footer End -->

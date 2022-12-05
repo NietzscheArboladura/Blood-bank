@@ -1,0 +1,143 @@
+{% load static %} <!--- Built-in helper in Django to load static; short-hand syntax --->
+
+<!-- Header Start-->
+{% block headerinclude %}
+
+<title>Features</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" type="text/css" href= "{% static 'css/styles.css' %}"/>
+<style>
+  body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+  body {font-size:16px;}
+  .w3-half img {margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+  .w3-half img:hover {opacity:1}
+</style>
+
+{% endblock headerinclude %}
+<!-- Header End -->
+
+<!-- Content/Body Start -->
+{% block content %} <!----------------------------------------------------------------->
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+    <img src="{% static 'images/blood-donation.png' %}" style="width:50%; margin-bottom: -65px;" alt="Logo">
+    <h2 class="w3-padding-64"><b>Blood Bank<br style="display: block; content: ''; margin-top: -7px;">System</b></h2>
+  </div>
+<div class="w3-bar-block">
+    <a href="{% url 'myapp1:my_index_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="{% url 'myapp1:features_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Features</a> 
+    <a href="{% url 'myapp1:aboutus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">About Us</a> 
+    <a href="{% url 'myapp1:contactus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact Us</a> 
+    <a href="{% url 'myapp1:signin_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign In</a> 
+    <a href="{% url 'myapp1:signup_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign Up</a>
+  </div>
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+  <span>Company Name</span>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+  
+
+  <!-- Services -->
+  <div class="w3-container" id="services" style="margin-top: 75px; margin-bottom: 20px; text-align: justify;">
+    <img src="{% static 'images/for-you.png' %}" style="width: 65px; float: left; margin-right: 10px;">
+    <h1 class="w3-xxxlarge w3-text-red"><b>Features</b></h1>
+    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <p>The purpose of our project is to provide a safe, secure, and convenient procedure to donate and/or receive blood from compatible users. The website presents a simple and organized interface wherein users can sign up as a donor or a patient to accumulate their specific needs. Our project is in collaboration with dozens of Medical Incorporations to provide secure locations for donation transactions to take place. For a better insight of the aforementioned project, check the photos displayed below as infographics on how Blood Donation works as well as its benefits. 
+    </p>
+  </div>
+
+  <!-- Photo grid (modal) -->
+  <div class="w3-row-padding">
+    <div class="w3-half">
+      <img src="{% static 'images/row2column1.jpg' %}" style="width:100%" onclick="onClick(this)">
+      <img src="{% static 'images/row1col1.jpg' %}" style="width:100%" onclick="onClick(this)">
+    </div>
+
+    <div class="w3-half">
+      <img src="{% static 'images/row1colu2.jpg' %}" style="width:100%" onclick="onClick(this)">
+      <img src="{% static 'images/row2colu2.jpg' %}" style="width:100%" onclick="onClick(this)">
+    </div>
+  </div>
+
+  <!-- Modal for full size images on click-->
+  <div id="modal01" class="w3-modal w3-black" style="padding-top:0" onclick="this.style.display='none'">
+    <span class="w3-button w3-black w3-xxlarge w3-display-topright">×</span>
+    <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+      <img id="img01" class="w3-image">
+      <p id="caption"></p>
+    </div>
+  </div>
+
+    <!-- Donation Benefits -->
+  <div class="w3-container" id="packages" style="margin-top: 75px; margin-bottom: 20px; text-align: justify;">
+    <img src="{% static 'images/thank-you.png' %}" style="width: 65px; float: left; margin-right: 10px;">
+    <h1 class="w3-xxxlarge w3-text-red"><b>Benefits</b></h1>
+    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <p>Donating blood, especially on a regular basis, can be similar to volunteer work. You give of your time (and your literal blood) to help strangers in need. If you go to specific blood donation location each time, you’ll get to know some of the staff who are also dedicating themselves to the cause of saving lives. Donating blood also has benefits for your emotional and physical health. Some benefits of donating blood include reducing stress, free health check-up, improve your emotional well-being, benefit your physical health, help get rid of negative feelings, and provide a sense of belonging and reduce isolation.</p>
+  </div>
+
+  <div class="w3-row-padding">
+    
+        
+    <div class="w3-half" style="width: 100%; float: left;">
+      <ul class="w3-ul w3-light-grey w3-center">
+        <li class="w3-red w3-padding-16"><h2>Benefits of Donating Blood</h2></li>
+        <li class="w3-padding-16">Reduce Stress</li>
+        <li class="w3-padding-16">Physical Health</li>
+        <li class="w3-padding-16">Free health checkup</li>
+        <li class="w3-padding-16">Get to help others in need</li>
+        <li class="w3-padding-16">Improve your Emotional Well-being</li>
+      </ul>
+    </div>
+  </div>
+
+<!-- End page content -->
+</div>
+
+{% endblock content %} <!------------------------------------------------------------->
+<!-- Content/Body End -->
+
+<!-- Footer Start -->
+{% block footerinclude %} <!---------------------------------------------------------->
+
+<!-- W3.CSS Container -->
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top: 75px; padding-right: 58px; position: relative; right: 0; bottom: 0; width: 100%;"><p class="w3-right">Otsuki, McWayne Q. CSIT327 G1-C1 A.Y. 2021-2022</p></div>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+</script>
+
+{% endblock footerinclude %} <!-------------------------------------------------------->
+<!-- Footer End -->

@@ -1,0 +1,132 @@
+{% load static %} <!--- Built-in helper in Django to load static; short-hand syntax --->
+
+<!-- Header Start-->
+{% block headerinclude %}
+
+<title>Choose a Role</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" type="text/css" href= "{% static 'css/styles.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.11.3/datatables.min.css"/>
+<style>
+  body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+  body {font-size:16px;}
+  .w3-half img {margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+  .w3-half img:hover {opacity:1}
+</style>
+
+{% endblock headerinclude %}
+<!-- Header End -->
+
+<!-- Content/Body Start -->
+{% block content %} <!----------------------------------------------------------------->
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+   <img src="{% static 'images/blood-donation.png' %}" style="width:50%; margin-bottom: -65px;" alt="Logo">
+    <h2 class="w3-padding-64"><b>Blood Bank<br style="display: block; content: ''; margin-top: -7px;">System</b></h2>
+  </div>
+  <div class="w3-bar-block">
+    <a href="{% url 'myapp1:my_index_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="{% url 'myapp1:features_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Features</a> 
+    <a href="{% url 'myapp1:aboutus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">About Us</a> 
+    <a href="{% url 'myapp1:contactus_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact Us</a> 
+    <a href="{% url 'myapp1:signin_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign In</a> 
+    <a href="{% url 'myapp1:signup_view' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Sign Up</a>
+  </div>
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+  <span>Company Name</span>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+
+  <!-- Header -->
+  <div class="w3-container" style="margin-top:80px" id="showcase">
+   <img src="{% static 'images/hi.png' %}" style="width: 65px; float: left; margin-right: 10px; margin-top: 10px;">
+    <h1 class="w3-xxxlarge w3-text-red" style="font-weight: bold;">Choose your role</h1>
+    <hr style="width:50px;border:5px solid red;" class="w3-round">
+    <br>
+
+    <table>
+
+        <tr>
+        <td>
+        <button class="w3-btn w3-block w3-padding w3-red w3-margin-bottom" style="font-size: 23px; font-weight: bold; letter-spacing: 5px; width: 100%; border-radius: 8px;"><img src="{% static 'images/youthtest.png' %}"><br><a href="{% url 'myapp1:createpatient_view' %}" onclick="w3_close()" class="w3-xxlarge w3-text-white">Patient</a></button>
+        </td>
+        <td>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+        <button class="w3-btn w3-block w3-padding w3-red w3-margin-bottom" style="font-size: 23px; font-weight: bold; letter-spacing: 5px; width: 100%; border-radius: 8px;"><img src="{% static 'images/addDVDtest2.png' %}"><br><a href="{% url 'myapp1:createphlebotomist_view' %}" onclick="w3_close()" class="w3-xxlarge w3-text-white">Phlebotomist</a></button>
+        </td>
+        </tr>
+
+    <table>
+
+    
+
+
+<!-- End page content -->
+</div>
+
+{% endblock content %} <!------------------------------------------------------------->
+<!-- Content/Body End -->
+
+<!-- Footer Start -->
+{% block footerinclude %} <!---------------------------------------------------------->
+
+<!-- W3.CSS Container -->
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top: 75px; padding-right: 58px; position: relative; right: 0; bottom: 0; width: 100%;"><p class="w3-right"s>Otsuki, McWayne Q. CSIT327 G1-C1 A.Y. 2021-2022</p></div>
+
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.11.3/datatables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+
+
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+
+</script>
+
+{% endblock footerinclude %} <!-------------------------------------------------------->
+<!-- Footer End -->
